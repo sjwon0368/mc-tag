@@ -1,4 +1,4 @@
-name: TagGame
+name: 술래잡기
 version: 1.0
 main: io.codejava.mc.tag.TagGamePlugin
 api-version: 1.21
