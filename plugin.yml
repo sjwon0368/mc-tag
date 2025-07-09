@@ -4,5 +4,5 @@ main: io.codejava.mc.tag.TagGamePlugin
 api-version: 1.21
 commands:
   tagstart:
-    usage: /tagstart <술래> <도망자>
+    usage: /tagstart <tagger> <runner>
     description: Starts a tag game between two players.
