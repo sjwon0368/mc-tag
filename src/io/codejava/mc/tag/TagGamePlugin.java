@@ -12,6 +12,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+
 import java.time.Duration;
 import java.util.*;
 
