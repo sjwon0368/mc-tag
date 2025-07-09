@@ -21,10 +21,17 @@ jobs:
         distribution: 'temurin'
         java-version: 24
 
+    - name: Download dependencies
+      run: |
+        mkdir -p lib
+        wget -O lib/spigot-api.jar https://repo1.maven.org/maven2/org/spigotmc/spigot-api/1.20.1-R0.1-SNAPSHOT/spigot-api-1.20.1-R0.1-SNAPSHOT.jar
+        wget -O lib/adventure-api.jar https://repo1.maven.org/maven2/net/kyori/adventure-api/4.13.1/adventure-api-4.13.1.jar
+        wget -O lib/adventure-platform-bukkit.jar https://repo1.maven.org/maven2/net/kyori/adventure-platform-bukkit/4.3.1/adventure-platform-bukkit-4.3.1.jar
+
     - name: Compile plugin
       run: |
         mkdir -p out
-        javac -d out src/io/codejava/mc/tag/TagGamePlugin.java
+        javac -cp "lib/*" -d out src/io/codejava/mc/tag/TagGamePlugin.java
         cp plugin.yml out/
         cd out
         jar cf TagGame.jar plugin.yml io
