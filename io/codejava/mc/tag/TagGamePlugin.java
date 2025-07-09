@@ -34,7 +34,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player p)) return true;
         if (!p.isOp()) {
-            p.sendMessage("§c이 명령어를 사용할 권한이 없습니다."); // op있는 유저만 사용
+            p.sendMessage("§c이 명령어를 사용할 권한이 없습니다.");
             return true;
         }
 
