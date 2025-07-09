@@ -27,6 +27,7 @@ jobs:
         wget -O lib/spigot-api.jar https://hub.spigotmc.org/nexus/repository/snapshots/org/spigotmc/spigot-api/1.20.1-R0.1-SNAPSHOT/spigot-api-1.20.1-R0.1-20230921.163938-66.jar
         wget -O lib/adventure-api.jar https://repo1.maven.org/maven2/net/kyori/adventure-api/4.13.1/adventure-api-4.13.1.jar
         wget -O lib/adventure-platform-bukkit.jar https://repo1.maven.org/maven2/net/kyori/adventure-platform-bukkit/4.3.1/adventure-platform-bukkit-4.3.1.jar
+        wget -O lib/adventure-text-serializer-legacy.jar https://repo1.maven.org/maven2/net/kyori/adventure-text-serializer-legacy/4.13.1/adventure-text-serializer-legacy-4.13.1.jar
 
     - name: Compile plugin
       run: |
