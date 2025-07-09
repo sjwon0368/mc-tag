@@ -1,0 +1,36 @@
+name: Build Tag Plugin
+
+on:
+  push:
+    paths:
+      - 'plugin.yml'
+      - 'src/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 24
+
+    - name: Compile plugin
+      run: |
+        mkdir -p out
+        javac -d out src/io/codejava/mc/tag/TagGamePlugin.java
+        cp plugin.yml out/
+        cd out
+        jar cf TagGame.jar plugin.yml io
+
+    - name: Upload JAR as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: TagGamePlugin
+        path: out/TagGame.jar
