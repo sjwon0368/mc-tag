@@ -32,7 +32,7 @@ jobs:
         wget -O lib/guava.jar https://repo1.maven.org/maven2/com/google/guava/guava/33.2.0-jre/guava-33.2.0-jre.jar
         wget -O lib/adventure-api.jar https://repo1.maven.org/maven2/net/kyori/adventure-api/4.14.0/adventure-api-4.14.0.jar
         wget -O lib/examination-api.jar https://repo1.maven.org/maven2/net/kyori/examination-api/1.3.0/examination-api-1.3.0.jar
-        wget -O lib/bungeecord-chat.jar https://repo1.maven.org/maven2/net/md-5/bungeecord-chat/1.21-R0.1-SNAPSHOT/bungeecord-chat-1.21-R0.1-20240625.164649-6.jar
+        wget -O lib/bungeecord-chat.jar https://repo1.maven.org/maven2/net/md-5/bungeecord-chat/1.21-R0.1/bungeecord-chat-1.21-R0.1.jar
 
     - name: Compile plugin
       run: |
