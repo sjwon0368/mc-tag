@@ -5,4 +5,4 @@ api-version: 1.21
 commands:
   tagstart:
     usage: /tagstart <tagger> <runner>
-    description: Starts a tag game between two players.
+    description: Starts a tag game between two players. Korean.
