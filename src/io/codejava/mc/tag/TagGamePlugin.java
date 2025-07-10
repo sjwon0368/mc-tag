@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
-import net.kyoti.adventure.key.Keyed;
+import net.kyori.adventure.key.Keyed;
 
 import java.time.Duration;
 import java.util.*;
