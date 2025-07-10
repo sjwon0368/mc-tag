@@ -102,13 +102,13 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
     }
 
     private void freezePlayer(Player p) {
-        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 999999, 255, false, false)); // 게임 시작 전 자동으로 못움직임
-        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 999999, 200, false, false));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 999999, 255, false, false)); // 수정 - 게임 시작 전 움직임 방지
+        p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 999999, 200, false, false));
     }
 
     private void unfreezePlayer(Player p) {
-        p.removePotionEffect(PotionEffectType.SLOW); // 게임 시작하면 움직일 수 있음
-        p.removePotionEffect(PotionEffectType.JUMP);
+        p.removePotionEffect(PotionEffectType.SLOWNESS);
+        p.removePotionEffect(PotionEffectType.JUMP_BOOST); // 수정 - 게임 시작 후 포션효과 제거, 움직임 가능
     }
 
     @EventHandler
