@@ -26,7 +26,6 @@ A Minecraft Server tag game plugin(Paper 1.21.5)
     * [ ] 기타 게임 이벤트
 
 ## 추가 정보
-> [!INFO]
 > 버전 1.0
 > 
 > 빌드 날짜: `2025/7/10 PM 04:33 GMT+0900`
