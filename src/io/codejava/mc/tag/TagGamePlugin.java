@@ -98,7 +98,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         player.removePotionEffect(PotionEffectType.JUMP);
     }
 
-        @Override
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player p)) return true;
         if (!p.isOp()) {
@@ -107,9 +107,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         }
 
         if (args.length != 2) {
-            p.sendMessage("§c명령어 사용 방법:
-/tagstart <술래> <도망자>
-예시: /tagstart user1 user2");
+            p.sendMessage("§c명령어 사용 방법:\n/tagstart <술래> <도망자>\n예시: /tagstart user1 user2");
             return true;
         }
 
@@ -117,7 +115,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         var run = Bukkit.getPlayerExact(args[1]);
 
         if (tag == null || run == null || !tag.isOnline() || !run.isOnline()) {
-            p.sendMessage("§c오류: 게임 시작 실패. 입력한 플레이어 이름 중 하나 이상이 존재하지 않거나 오프라인입니다.");
+            p.sendMessage("§c오류: 게임 시작 실패.\n입력한 플레이어 이름 중 하나 이상이 존재하지 않거나 오프라인입니다.");
             return true;
         }
 
