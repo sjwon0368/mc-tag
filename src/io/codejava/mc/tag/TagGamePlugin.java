@@ -51,19 +51,6 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         }.runTaskTimer(this, 0, 20);
     }
 
-    
-
-    @EventHandler
-    public void onTaggerDeath(PlayerDeathEvent event) {
-        if (!gameRunning) return;
-        if (event.getEntity().equals(tagger)) {
-            if (taggerTrackerTask != null) {
-                taggerTrackerTask.cancel();
-                taggerTrackerTask = null;
-            }
-        }
-    }
-
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         if (frozen.contains(event.getPlayer().getUniqueId())) {
@@ -79,8 +66,8 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 255, false, false, false));
-                    event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128, false, false, false));
+                    event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 255, false, false, false));
+                    event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, Integer.MAX_VALUE, 128, false, false, false));
                 }
             }.runTaskLater(this, 1L);
         }
@@ -88,81 +75,14 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
 
     private void freezePlayer(Player player) {
         frozen.add(player.getUniqueId());
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 255, false, false, false));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128, false, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, 255, false, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, Integer.MAX_VALUE, 128, false, false, false));
     }
 
     private void unfreezePlayer(Player player) {
         frozen.remove(player.getUniqueId());
-        player.removePotionEffect(PotionEffectType.SLOW);
-        player.removePotionEffect(PotionEffectType.JUMP);
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player p)) return true;
-        if (!p.isOp()) {
-            p.sendMessage("§c이 명령어를 사용할 권한이 없습니다.");
-            return true;
-        }
-
-        if (args.length != 2) {
-            p.sendMessage("§c명령어 사용 방법:\n/tagstart <술래> <도망자>\n예시: /tagstart user1 user2");
-            return true;
-        }
-
-        var tag = Bukkit.getPlayerExact(args[0]);
-        var run = Bukkit.getPlayerExact(args[1]);
-
-        if (tag == null || run == null || !tag.isOnline() || !run.isOnline()) {
-            p.sendMessage("§c오류: 게임 시작 실패.\n입력한 플레이어 이름 중 하나 이상이 존재하지 않거나 오프라인입니다.");
-            return true;
-        }
-
-        if (tag.equals(run)) {
-            p.sendMessage("§c술래와 도망자가 동일할 수 없습니다.");
-            return true;
-        }
-
-        tagger = tag;
-        runner = run;
-        taggerOriginalLoc = tag.getLocation();
-        runnerOriginalLoc = run.getLocation();
-
-        double distance = tag.getLocation().distance(run.getLocation());
-        if (distance < 100) {
-            p.sendMessage("§e두 플레이어 사이의 거리가 100블럭 이상이 아닙니다. 자동으로 랜덤 위치에 100블럭 이상의 거리로 순간이동합니다.");
-            tag.teleport(tag.getWorld().getSpawnLocation().add(0, 2, 0));
-            run.teleport(tag.getWorld().getSpawnLocation().add(150, 2, 0));
-        }
-
-        freezePlayer(tag);
-        freezePlayer(run);
-
-        tag.showTitle(Title.title(Component.text("술래잡기가 곧 시작됩니다.", NamedTextColor.YELLOW), Component.text(""),
-                Title.Times.of(Duration.ofSeconds(1), Duration.ofSeconds(15), Duration.ofSeconds(1))));
-
-        new BukkitRunnable() {
-            int seconds = 15;
-            @Override
-            public void run() {
-                if (seconds <= 0) {
-                    unfreezePlayer(tagger);
-                    unfreezePlayer(runner);
-                    tagger.sendActionBar(Component.text("게임 시작!", NamedTextColor.GREEN));
-                    runner.sendActionBar(Component.text("게임 시작!", NamedTextColor.GREEN));
-                    gameRunning = true;
-                    cancel();
-                    return;
-                }
-                String msg = "게임 시작까지 " + seconds + "초";
-                tagger.sendActionBar(Component.text(msg));
-                runner.sendActionBar(Component.text(msg));
-                seconds--;
-            }
-        }.runTaskTimer(this, 0, 20);
-
-        return true;
+        player.removePotionEffect(PotionEffectType.SLOWNESS);
+        player.removePotionEffect(PotionEffectType.JUMP_BOOST);
     }
     private void startTrackingRunner() {
         if (taggerTrackerTask != null) {
