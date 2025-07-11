@@ -15,7 +15,7 @@ A Minecraft Server tag game plugin(Paper 1.21.5)
 > 커밋 ID: `cc42bfe`
 >
 
-> [!중요]
+> [!IMPORTANT]
 > 이 플러그인은 현재 알파(alpha) 상태입니다.
 >
 > 버그 또는 오류가 발생하지 않는다는 보장이 없으며, 추후 업데이트 및 패치될 예정입니다.
