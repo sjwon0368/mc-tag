@@ -47,7 +47,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                     tagger.getInventory().setItemInOffHand(offhandItem.getAmount() > 0 ? offhandItem : null);
 
                     startTrackingRunner();
-                }\            }
+                }            }
         }.runTaskTimer(this, 0, 20);
     }
 
