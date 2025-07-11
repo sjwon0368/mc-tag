@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
-import net.kyori.adventure.key.Keyed;
+import net.kyori.adventure.key.Keyed; // build.yml에 net.kyori.adventure.key 라이브러리 추가
 
 import java.time.Duration;
 import java.util.*;
