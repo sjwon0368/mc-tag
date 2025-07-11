@@ -28,11 +28,67 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
     private Location runnerOriginalLoc;
     private final Map<UUID, Location> deathLocations = new HashMap<>();
     private boolean gameRunning = false;
+    private BukkitRunnable taggerTrackerTask;
 
     @Override
     public void onEnable() {
         Objects.requireNonNull(getCommand("tagstart")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this); // 명령어, 이벤트 설정 추가 - 플러그인 실행 시
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!gameRunning || tagger == null || runner == null || !tagger.isOnline()) return;
+
+                ItemStack offhandItem = tagger.getInventory().getItemInOffHand();
+                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND_ORE) {
+                    // Consume 1 diamond ore and show runner coordinates
+                    offhandItem.setAmount(offhandItem.getAmount() - 1);
+                    tagger.getInventory().setItemInOffHand(offhandItem.getAmount() > 0 ? offhandItem : null);
+
+                    startTrackingRunner();
+                }\            }
+        }.runTaskTimer(this, 0, 20);
+    }
+
+    private void startTrackingRunner() {
+        if (taggerTrackerTask != null) {
+            taggerTrackerTask.cancel();
+        }
+
+        taggerTrackerTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!gameRunning || tagger == null || runner == null || !tagger.isOnline() || !runner.isOnline()) {
+                    cancel();
+                    return;
+                }
+
+                Location loc = runner.getLocation();
+                String worldSuffix = switch (loc.getWorld().getEnvironment()) {
+                    case NETHER -> " §e(네더)";
+                    case THE_END -> " §e(엔드)";
+                    default -> "";
+                };
+
+                String coords = "도망자 좌표:\n" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + worldSuffix;
+
+                tagger.sendActionBar(Component.text(coords, NamedTextColor.WHITE));
+            }
+        };
+
+        taggerTrackerTask.runTaskTimer(this, 0, 20);
+    }
+
+    @EventHandler
+    public void onTaggerDeath(PlayerDeathEvent event) {
+        if (!gameRunning) return;
+        if (event.getEntity().equals(tagger)) {
+            if (taggerTrackerTask != null) {
+                taggerTrackerTask.cancel();
+                taggerTrackerTask = null;
+            }
+        }
     }
 
     @Override
@@ -101,6 +157,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
 
         return true;
     }
+
 
     private void freezePlayer(Player p) {
         p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 999999, 255, false, false)); // 수정 - 게임 시작 전 움직임 방지
