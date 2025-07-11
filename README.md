@@ -2,12 +2,17 @@
 마인크래프트 Paper 1.21.5 서버에 사용 가능한 술래잡기 플러그인.
 A Minecraft Server tag game plugin(Paper 1.21.5)
 
+> [!IMPORTANT]
+> 이 플러그인은 현재 알파(alpha) 상태입니다.
+>
+> 버그 또는 오류가 발생하지 않는다는 보장이 없으며, 추후 업데이트 및 패치될 예정입니다.
+
 ## 사용 방법
 ### 명령어(Usage)
 `/tagstart <술래> <도망자>`
 > 예시: `/tagstart user1 user2`
 
-# 진행률
+## 진행률
 * [ ] UI
     * [x] 정보 표시
     * [x] 술래 - 도망자 위치 표시
@@ -27,10 +32,5 @@ A Minecraft Server tag game plugin(Paper 1.21.5)
 > 
 > 커밋 ID: `cc42bfe`
 >
-
-> [!IMPORTANT]
-> 이 플러그인은 현재 알파(alpha) 상태입니다.
->
-> 버그 또는 오류가 발생하지 않는다는 보장이 없으며, 추후 업데이트 및 패치될 예정입니다.
 
 > 이 플러그인은 GNU-GPL3.0 라이선스에 의해 보호됩니다.
