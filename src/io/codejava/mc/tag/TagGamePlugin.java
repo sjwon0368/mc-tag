@@ -1,3 +1,7 @@
+/* 
+ * 
+ */
+
 package io.codejava.mc.tag;
 
 import org.bukkit.*;
@@ -28,7 +32,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
     private Location runnerOriginalLoc;
     private final Map<UUID, Location> deathLocations = new HashMap<>();
     private boolean gameRunning = false;
-    private BukkitRunnable taggerTrackerTask;
+    private BukkitRunnable taggerTrackerTask; // taggerTrackerTask 라고 써져 있어도 도망자 위치 추적임
     private final Set<UUID> frozen = new HashSet<>();
 
     @Override
@@ -42,9 +46,13 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                 if (!gameRunning || tagger == null || runner == null || !tagger.isOnline()) return;
 
                 ItemStack offhandItem = tagger.getInventory().getItemInOffHand();
-                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND_ORE) {
+                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND_ORE && offhandItem.getAmount() > 0) {
                     offhandItem.setAmount(offhandItem.getAmount() - 1);
-                    tagger.getInventory().setItemInOffHand(offhandItem.getAmount() > 0 ? offhandItem : null);
+                    if (offhandItem.getAmount() > 0) {
+                        tagger.getInventory().setItemInOffHand(offhandItem);
+                    } else {
+                        tagger.getInventory().setItemInOffHand(null);
+                    }
                     startTrackingRunner();
                 }
             }
@@ -84,9 +92,51 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         player.removePotionEffect(PotionEffectType.SLOWNESS);
         player.removePotionEffect(PotionEffectType.JUMP_BOOST);
     }
+
+    private BukkitRunnable runnerTrackerTask; // 도망자에게 2분마다 술래 위치 표시하고 30초 뒤에 숨기는 거
+
+    private void startRunnerTracker() { // startRunnerTracker 라고 써져 있어도 어쨌든 술래 위치 추적임
+        runnerTrackerTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!gameRunning || runner == null || tagger == null || !runner.isOnline() || !tagger.isOnline()) {
+                    cancel();
+                    runnerTrackerTask = null;
+                    return;
+                }
+                // Start 30 seconds of tracking
+                new BukkitRunnable() {
+                    int seconds = 30;
+                    @Override
+                    public void run() {
+                        if (!gameRunning || runner == null || tagger == null || !runner.isOnline() || !tagger.isOnline() || seconds <= 0) {
+                            cancel();
+                            return;
+                        }
+                        Location loc = tagger.getLocation();
+                        String worldSuffix = switch (loc.getWorld().getEnvironment()) {
+                            case NETHER -> " §e(네더)";
+                            case THE_END -> " §e(엔드)";
+                            default -> "";
+                        };
+                        String coords = "술래 좌표:\n" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + worldSuffix
+                            + "\n남은 시간: " + seconds + "초";
+                        runner.sendActionBar(Component.text(coords, NamedTextColor.WHITE));
+                        seconds--;
+                    }
+                }.runTaskTimer(this, 0, 20);
+            }
+        };
+        // Run every 2 minutes (2400 ticks)
+        runnerTrackerTask.runTaskTimer(this, 0, 2400);
+    }
+
+// Call startRunnerTracker() when the game starts
+
     private void startTrackingRunner() {
         if (taggerTrackerTask != null) {
-            taggerTrackerTask.cancel();
+            tagger.sendMessage("§e이미 도망자 추적이 활성화되어 있습니다.");
+            return;
         }
 
         taggerTrackerTask = new BukkitRunnable() {
@@ -201,9 +251,23 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         if (!gameRunning) return;
         if (e.getPlayer().equals(tagger) || e.getPlayer().equals(runner)) {
             gameRunning = false;
-            Bukkit.broadcastMessage("§c오류: 하나 이상의 플레이어가 게임을 나갔습니다. 게임이 종료됩니다."); // 오류 3 - 플레이어 중 한 명 이상이 나감감
-            if (tagger != null) tagger.teleport(taggerOriginalLoc);
-            if (runner != null) runner.teleport(runnerOriginalLoc);
+            Bukkit.broadcastMessage("§c오류: 하나 이상의 플레이어가 게임을 나갔습니다. 게임이 종료됩니다."); // 플레이어 나감 - 게임 종료
+            if (tagger != null) {
+                unfreezePlayer(tagger);
+                if (taggerOriginalLoc != null) tagger.teleport(taggerOriginalLoc);
+            }
+            if (runner != null) {
+                unfreezePlayer(runner);
+                if (runnerOriginalLoc != null) runner.teleport(runnerOriginalLoc);
+            }
+            if (taggerTrackerTask != null) {
+                taggerTrackerTask.cancel();
+                taggerTrackerTask = null;
+            }
+            if (runnerTrackerTask != null) {
+                runnerTrackerTask.cancel();
+                runnerTrackerTask = null;
+            }
         }
     }
 
@@ -213,10 +277,18 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         Player p = e.getEntity();
 
         if (p.equals(tagger)) {
+            if (taggerTrackerTask != null) {
+                taggerTrackerTask.cancel();
+                taggerTrackerTask = null;
+            }
             Bukkit.broadcastMessage("§e술래가 사망했습니다. 1분 후 동일한 위치에서 리스폰됩니다."); // 술래 사망 - 1분 후 리스폰
             deathLocations.put(p.getUniqueId(), p.getLocation());
             scheduleRespawn(p, 60);
         } else if (p.equals(runner)) {
+            if (runnerTrackerTask != null) {
+                runnerTrackerTask.cancel();
+                runnerTrackerTask = null;
+            }
             Bukkit.broadcastMessage("§e도망자가 사망했습니다. 2분 후 동일한 위치에서 리스폰됩니다."); // 도망자 사망 - 2분 후 리스폰
             deathLocations.put(p.getUniqueId(), p.getLocation());
             scheduleRespawn(p, 120);
@@ -263,17 +335,19 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
             public void run() {
                 if (timer <= 0) {
                     Location loc = deathLocations.remove(p.getUniqueId());
-                    if (loc != null) p.spigot().respawn();
+                    // Wait for player to respawn, then teleport
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            p.teleport(loc);
+                            if (loc != null && p.isOnline()) {
+                                p.teleport(loc);
+                            }
                         }
                     }.runTaskLater(TagGamePlugin.this, 1);
                     cancel();
                     return;
                 }
-                p.sendTitle("§c죽었습니다!", "§f리스폰까지 " + timer + "초", 0, 20, 0); // 리스폰 카운트다운
+                p.sendTitle("§c죽었습니다!", "§f리스폰까지 " + timer + "초", 0, 20, 0);
                 timer--;
             }
         }.runTaskTimer(this, 20, 20);
@@ -281,7 +355,21 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
 
     private void endGame() {
         gameRunning = false;
-        if (tagger != null) tagger.teleport(taggerOriginalLoc);
-        if (runner != null) runner.teleport(runnerOriginalLoc); // 게임 종료시 플레이어들을 원래 위치로 텔포
+        if (taggerTrackerTask != null) {
+            taggerTrackerTask.cancel();
+            taggerTrackerTask = null;
+        }
+        if (runnerTrackerTask != null) {
+        runnerTrackerTask.cancel();
+        runnerTrackerTask = null;
+        }
+        if (tagger != null && tagger.isOnline() && taggerOriginalLoc != null) {
+            unfreezePlayer(tagger);
+            tagger.teleport(taggerOriginalLoc);
+        }
+        if (runner != null && runner.isOnline() && runnerOriginalLoc != null) {
+            unfreezePlayer(runner);
+            runner.teleport(runnerOriginalLoc);
+        } // 게임 종료시 술래, 도망자 원래 위치로 텔레포트
     }
 }
