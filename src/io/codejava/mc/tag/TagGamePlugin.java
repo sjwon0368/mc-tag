@@ -40,6 +40,14 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         Objects.requireNonNull(getCommand("tagstart")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
 
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Activation load time improved."); // 플러그인 활성화 메시지
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Testing components.");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Runnable tasks operational.");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Load locales... ko-kr.utf8");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Language changed: 한국어 (ko-kr.utf8)");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: 로딩 완료.");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: /tagstart <술래> <도망자> 명령어 사용 가능.");
+
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -61,7 +69,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!gameRunning || tagger == null || runner == null || !tagger.isOnline()) return;
+                if (!gameRunning || tagger == null || runner == null || !runner.isOnline()) return;
 
                 ItemStack offhandItem = runner.getInventory().getItemInOffHand();
                 if (offhandItem != null && offhandItem.getType() == Material.DIAMOND_ORE && offhandItem.getAmount() > 0) {
