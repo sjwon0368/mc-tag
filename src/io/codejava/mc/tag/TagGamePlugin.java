@@ -57,6 +57,24 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                 }
             }
         }.runTaskTimer(this, 0, 20);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!gameRunning || tagger == null || runner == null || !tagger.isOnline()) return;
+
+                ItemStack offhandItem = runner.getInventory().getItemInOffHand();
+                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND_ORE && offhandItem.getAmount() > 0) {
+                    offhandItem.setAmount(offhandItem.getAmount() - 1);
+                    if (offhandItem.getAmount() > 0) {
+                        runner.getInventory().setItemInOffHand(offhandItem);
+                    } else {
+                        runner.getInventory().setItemInOffHand(null);
+                    }
+                    startRunnerTracker();
+                }
+            }
+        }.runTaskTimer(this, 0, 20);
     }
 
     @EventHandler
@@ -93,9 +111,29 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         player.removePotionEffect(PotionEffectType.JUMP_BOOST);
     }
 
-    private BukkitRunnable runnerTrackerTask; // 도망자에게 2분마다 술래 위치 표시하고 30초 뒤에 숨기는 거
+    private BukkitRunnable runnerTrackerTask; // 도망자에게 2분마다 술래 위치 표시하고 30초 뒤에 숨기는 거 근데 안됨 그래서 채팅 대체
 
-    private void startRunnerTracker() { // startRunnerTracker 라고 써져 있어도 어쨌든 술래 위치 추적임
+    private void startRunnerTracker() {
+        runnerTrackerTask = new BukkitRunnable() {
+            public void run() {
+                if (!gameRunning || runner == null || tagger == null || !runner.isOnline() || !tagger.isOnline()) {
+                    cancel();
+                    runnerTrackerTask = null;
+                    return;
+                }
+                Location loc = tagger.getLocation();
+                String worldSuffix = switch (loc.getWorld().getEnvironment()) {
+                    case NETHER -> " §e(네더)";
+                    case THE_END -> " §e(엔드)";
+                    default -> "";
+                };
+                String coords = "술래 좌표:\n" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + worldSuffix;
+                runner.sendMessage(Component.text(coords, NamedTextColor.WHITE));
+            }
+        };
+    }
+
+    /*private void startRunnerTracker() { // startRunnerTracker 라고 써져 있어도 어쨌든 술래 위치 추적임
         runnerTrackerTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -129,7 +167,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         };
         // Run every 2 minutes (2400 ticks)
         runnerTrackerTask.runTaskTimer(this, 0, 2400);
-    }
+    }*/
 
 // Call startRunnerTracker() when the game starts
 
