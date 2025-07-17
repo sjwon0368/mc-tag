@@ -1,3 +1,7 @@
+/*
+* NOT THIS FILE!!!
+*/
+
 package io.codejava.mc.tag;
 
 import org.bukkit.*;
