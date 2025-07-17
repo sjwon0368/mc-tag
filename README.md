@@ -13,11 +13,11 @@ A Minecraft Server tag game plugin(Paper 1.21.5)
 > 예시: `/tagstart user1 user2`
 
 ## 진행률
-* [ ] UI
+* [x] UI
     * [x] 정보 표시
     * [x] 술래 - 도망자 위치 표시
     * [x] 사망 화면(완전히 완료되지는 않음)
-* [ ] 기타
+* [x] 기타
     * [x] 사망시 이동 불가
     * [x] 다이아몬드 왼손 들기 인식
     * [x] 기타 알림 표시
