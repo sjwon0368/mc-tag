@@ -26,9 +26,9 @@ A Minecraft Server tag game plugin(Paper 1.21.5)
     * [x] 기타 게임 이벤트
 
 ## 추가 정보
-> 버전 1.3a-patch1
+> 버전 1.3a-patch2
 > 
-> 빌드 날짜: `2025/7/17 AM 07:13 GMT+0900`
+> 빌드 날짜: `2025/7/17 PM 04:36 GMT+0900`
 > 
 > 커밋 ID: `95e8cc8`
 >
