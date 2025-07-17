@@ -40,13 +40,13 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         Objects.requireNonNull(getCommand("tagstart")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
 
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Activation load time improved."); // 플러그인 활성화 메시지
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Testing components.");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Runnable tasks operational.");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Load locales... ko-kr.utf8");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: Language changed: 한국어 (ko-kr.utf8)");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: 로딩 완료.");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3a-patch2: /tagstart <술래> <도망자> 명령어 사용 가능.");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Activation load time improved."); // 플러그인 활성화 메시지
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Testing components.");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Runnable tasks operational.");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Load locales... ko-kr.utf8");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Language changed: 한국어 (ko-kr.utf8)");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: 로딩 완료.");
+        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: /tagstart <술래> <도망자> 명령어 사용 가능.");
 
         new BukkitRunnable() {
             @Override
@@ -54,7 +54,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                 if (!gameRunning || tagger == null || runner == null || !tagger.isOnline()) return;
 
                 ItemStack offhandItem = tagger.getInventory().getItemInOffHand();
-                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND_ORE && offhandItem.getAmount() > 0) {
+                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND && offhandItem.getAmount() > 0) {
                     offhandItem.setAmount(offhandItem.getAmount() - 1);
                     if (offhandItem.getAmount() > 0) {
                         tagger.getInventory().setItemInOffHand(offhandItem);
@@ -72,7 +72,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                 if (!gameRunning || tagger == null || runner == null || !runner.isOnline()) return;
 
                 ItemStack offhandItem = runner.getInventory().getItemInOffHand();
-                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND_ORE && offhandItem.getAmount() > 0) {
+                if (offhandItem != null && offhandItem.getType() == Material.DIAMOND && offhandItem.getAmount() > 0) {
                     offhandItem.setAmount(offhandItem.getAmount() - 1);
                     if (offhandItem.getAmount() > 0) {
                         runner.getInventory().setItemInOffHand(offhandItem);
@@ -136,7 +136,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                     default -> "";
                 };
                 String coords = "술래 좌표:\n" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + worldSuffix;
-                runner.sendMessage(Component.text(coords, NamedTextColor.WHITE));
+                runner.sendMessage(Component.text(coords, NamedTextColor.WHITE)); // send the text thats only visible to the runner in white
             }
         };
     }
@@ -180,10 +180,10 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
 // Call startRunnerTracker() when the game starts
 
     private void startTrackingRunner() {
-        if (taggerTrackerTask != null) {
+        /*if (taggerTrackerTask != null) {
             tagger.sendMessage("§e이미 도망자 추적이 활성화되어 있습니다.");
             return;
-        }
+        }*/
 
         taggerTrackerTask = new BukkitRunnable() {
             @Override
@@ -206,7 +206,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
             }
         };
 
-        taggerTrackerTask.runTaskTimer(this, 0, 20);
+        //taggerTrackerTask.runTaskTimer(this, 0, 20); It's now going to run once, without any repeats
     }
 
     @EventHandler
@@ -329,6 +329,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
             }
             Bukkit.broadcastMessage("§e술래가 사망했습니다. 1분 후 동일한 위치에서 리스폰됩니다."); // 술래 사망 - 1분 후 리스폰
             deathLocations.put(p.getUniqueId(), p.getLocation());
+            freezePlayer(p);
             scheduleRespawn(p, 60);
         } else if (p.equals(runner)) {
             if (runnerTrackerTask != null) {
@@ -337,6 +338,7 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
             }
             Bukkit.broadcastMessage("§e도망자가 사망했습니다. 2분 후 동일한 위치에서 리스폰됩니다."); // 도망자 사망 - 2분 후 리스폰
             deathLocations.put(p.getUniqueId(), p.getLocation());
+            freezePlayer(p);
             scheduleRespawn(p, 120);
         }
     }
@@ -394,6 +396,10 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                     return;
                 }
                 p.sendTitle("§c죽었습니다!", "§f리스폰까지 " + timer + "초", 0, 20, 0);
+                // Add something to unfreeze the player after the timer has finished
+                if (frozen.contains(p.getUniqueId())) {
+                    unfreezePlayer(p);
+                }
                 timer--;
             }
         }.runTaskTimer(this, 20, 20);
