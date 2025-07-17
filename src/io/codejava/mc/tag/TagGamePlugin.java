@@ -40,14 +40,6 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
         Objects.requireNonNull(getCommand("tagstart")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
 
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Activation load time improved."); // 플러그인 활성화 메시지
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Testing components.");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Runnable tasks operational.");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Load locales... ko-kr.utf8");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: Language changed: 한국어 (ko-kr.utf8)");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: 로딩 완료.");
-        getServer().getConsoleSender().sendMessage("§a[Plugin/Tag] @1.3: /tagstart <술래> <도망자> 명령어 사용 가능.");
-
         new BukkitRunnable() {
             @Override
             public void run() {
