@@ -128,7 +128,11 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                     default -> "";
                 };
                 String coords = "술래 좌표:\n" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + worldSuffix;
-                runner.sendMessage(Component.text(coords, NamedTextColor.WHITE)); // send the text thats only visible to the runner in white
+                // dont use line 132 since I dont think chat messages that are visible to a specific player exist
+                // can you replace it with an action bar message?
+                runner.sendActionBar(Component.text(coords, NamedTextColor.WHITE)); // send the text thats visible to the runner in white
+                // If you want to send a message that only the runner can see, you can use the following line instead:
+                // runner.sendMessage(Component.text(coords, NamedTextColor.WHITE)); // send the text thats only visible to the runner in white
             }
         };
     }
@@ -193,9 +197,10 @@ public class TagGamePlugin extends JavaPlugin implements Listener, CommandExecut
                 };
 
                 String coords = "도망자 좌표:\n" + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + worldSuffix;
-
+                // also for the tagger, action bar. and if possible, add a black background please?
+                // is it possible to add backgrounds to the action bar messages? If possible I want black.
                 tagger.sendActionBar(Component.text(coords, NamedTextColor.WHITE));
-            }
+            }; // always add this semicolon because if I dont, yeah boom. java tells me to use ':' instead of '->' in switch. so if I do that it pulls up more syntax errors and a lot of other error types that I dont even know.
         };
 
         //taggerTrackerTask.runTaskTimer(this, 0, 20); It's now going to run once, without any repeats
