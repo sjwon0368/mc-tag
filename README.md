@@ -28,9 +28,9 @@ A Minecraft Server tag game plugin(Paper 1.21.5)
 ## 추가 정보
 > 버전 1.3a-patch2
 > 
-> 빌드 날짜: `2025/7/17 PM 04:36 GMT+0900`
+> 빌드 날짜: `2025/7/19 PM 07:49 GMT+0900`
 > 
-> 커밋 ID: `95e8cc8`
+> 커밋 ID: 81ef15c
 >
 
 > 이 플러그인은 GNU-GPL3.0 라이선스에 의해 보호됩니다.
